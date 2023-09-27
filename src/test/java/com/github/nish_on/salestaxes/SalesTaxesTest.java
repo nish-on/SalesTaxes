@@ -154,4 +154,14 @@ public class SalesTaxesTest {
                 .isEqualTo(new ReceiptPosition(1, "imported music CD", BigDecimal.valueOf(14.99F), true, 15.0F, BigDecimal.valueOf(2.25F)));
     }
 
+    @Test
+    public void testCalculationOfSalesTax_4(){
+        ReceiptPosition receiptPosition = new ReceiptPosition(1, "box of imported chocolates", BigDecimal.valueOf(11.25F), true, 15.0F);
+
+        assertThat(salesTaxes.calculateSalesTax(receiptPosition))
+                .usingRecursiveComparison()
+                .ignoringFields("salesTax")
+                .isEqualTo(new ReceiptPosition(1, "box of imported chocolates", BigDecimal.valueOf(11.25F), true, 15.0F, BigDecimal.valueOf(1.7F)));
+    }
+
 }

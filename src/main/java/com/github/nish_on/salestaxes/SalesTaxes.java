@@ -80,7 +80,7 @@ public class SalesTaxes {
         BigDecimal salesTax = salesTaxRate.multiply(receiptPosition.getItemValue()).multiply(BigDecimal.valueOf(100.0F)).round(mathContext);
 
         receiptPosition.setSalesTax(salesTax);
-        
+
         return receiptPosition;
     }
 }
