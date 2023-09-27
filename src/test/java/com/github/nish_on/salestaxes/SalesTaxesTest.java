@@ -46,5 +46,23 @@ public class SalesTaxesTest {
                 .isEqualTo(new ReceiptPosition(1, "box of imported chocolates", BigDecimal.valueOf(11.25F), true));
     }
 
+    @Test
+    public void testSplitItemDescriptionIntoFourPartsNonImported_2() {
+        assertThat(salesTaxes.getSplittedItemDescriptionWithImportStatus("1 bottle of perfume at 47.50"))
+                .usingRecursiveComparison()
+                .ignoringFields("salesTaxRate", "salesTax")
+                .isEqualTo(new ReceiptPosition(1, "bottle of perfume", BigDecimal.valueOf(47.50F), false));
+    }
+
+    @Test
+    public void testSplitItemDescriptionIntoFourPartsImported_2() {
+        assertThat(salesTaxes.getSplittedItemDescriptionWithImportStatus("1 imported bottle of perfume at 47.50"))
+                .usingRecursiveComparison()
+                .ignoringFields("salesTaxRate", "salesTax")
+                .isEqualTo(new ReceiptPosition(1, "imported bottle of perfume", BigDecimal.valueOf(47.50F), true));
+    }
+
+
+
 
 }
