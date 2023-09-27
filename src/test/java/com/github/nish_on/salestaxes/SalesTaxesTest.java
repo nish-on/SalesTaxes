@@ -1,6 +1,7 @@
 package com.github.nish_on.salestaxes;
 
 import junit.framework.TestCase;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -163,5 +164,14 @@ public class SalesTaxesTest {
                 .ignoringFields("salesTax")
                 .isEqualTo(new ReceiptPosition(1, "box of imported chocolates", BigDecimal.valueOf(11.25F), true, 15.0F, BigDecimal.valueOf(1.7F)));
     }
+@Ignore
+    @Test
+    public void testOutput(){
+        String input = "1 book at 12.49\n1 music CD at 14.99\n1 chocolate bar at 0.85";
+        String expectedOutput = "1 book: 12.49\n1 music CD: 16.49\n1 chocolate bar: 0.85\nSales Taxes: 1.50\nTotal: 29.83";
+        assertThat(salesTaxes.getReceiptContent(input))
+                .isEqualTo(expectedOutput);
+    }
+
 
 }

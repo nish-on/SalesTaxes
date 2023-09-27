@@ -42,8 +42,8 @@ public class SalesTaxes {
         } else {
             splittedDescriptionWithImportStatus = new String[] {splittedDescription[0], splittedDescription[1], splittedDescription[2], "false"};
         }
-
-        ReceiptPosition receiptPosition = new ReceiptPosition(Integer.parseInt(splittedDescriptionWithImportStatus[0]), splittedDescriptionWithImportStatus[1], BigDecimal.valueOf(Float.parseFloat(splittedDescriptionWithImportStatus[2])), Boolean.parseBoolean(splittedDescriptionWithImportStatus[3]));
+        MathContext mathContext = new MathContext(0);
+        ReceiptPosition receiptPosition = new ReceiptPosition(Integer.parseInt(splittedDescriptionWithImportStatus[0]), splittedDescriptionWithImportStatus[1], BigDecimal.valueOf(Float.parseFloat(splittedDescriptionWithImportStatus[2])).round(mathContext), Boolean.parseBoolean(splittedDescriptionWithImportStatus[3]));
         return receiptPosition;
     }
 
@@ -75,12 +75,37 @@ public class SalesTaxes {
 
         BigDecimal salesTaxRate = BigDecimal.valueOf(receiptPosition.getSalesTaxRate());
 
-        MathContext mathContext = new MathContext(2);
+        MathContext mathContext = new MathContext(0);
 
         BigDecimal salesTax = salesTaxRate.multiply(receiptPosition.getItemValue()).multiply(BigDecimal.valueOf(100.0F)).round(mathContext);
 
         receiptPosition.setSalesTax(salesTax);
 
         return receiptPosition;
+    }
+
+    public String getReceiptContent(String cart) {
+        StringBuilder sb = new StringBuilder();
+        BigDecimal salesTaxes = BigDecimal.valueOf(0.0F);
+        BigDecimal total = BigDecimal.valueOf(0.0F);
+        String[] cartArray = cart.split("\\n");
+
+        for(String itemDescription : cartArray) {
+            ReceiptPosition receiptPosition = getSplittedItemDescriptionWithImportStatus(itemDescription);
+            receiptPosition = calculateSalesTax(addImportTax(getBasicSalesTaxRate( receiptPosition)));
+            sb.append(receiptPosition.getAmount())
+                    .append(" ")
+                    .append(receiptPosition.getItemDescription())
+                    .append(": ")
+                    .append(receiptPosition.getItemValue().add(receiptPosition.getSalesTax()))
+                    .append("\n");
+            salesTaxes = salesTaxes.add(receiptPosition.getSalesTax());
+            total = total.add(receiptPosition.getItemValue().add(receiptPosition.getSalesTax()));
+        }
+
+        sb.append("Sales Taxes: ").append(salesTaxes).append("\n")
+                .append("Total: ").append(total);
+
+        return sb.toString();
     }
 }
