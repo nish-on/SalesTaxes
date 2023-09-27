@@ -124,7 +124,34 @@ public class SalesTaxesTest {
                 .isEqualTo(new ReceiptPosition(1, "music CD", BigDecimal.valueOf(14.99F), false, 10.0F));
     }
 
+    @Test
+    public void testCalculationOfSalesTax(){
+        ReceiptPosition receiptPosition = new ReceiptPosition(1, "music CD", BigDecimal.valueOf(14.99F), false, 10.0F);
 
+        assertThat(salesTaxes.calculateSalesTax(receiptPosition))
+                .usingRecursiveComparison()
+                .ignoringFields("salesTax")
+                .isEqualTo(new ReceiptPosition(1, "music CD", BigDecimal.valueOf(14.99F), false, 10.0F, BigDecimal.valueOf(1.5F)));
+    }
 
+    @Test
+    public void testCalculationOfSalesTax_2(){
+        ReceiptPosition receiptPosition = new ReceiptPosition(1, "book", BigDecimal.valueOf(12.49F), true, 5.0F);
+
+        assertThat(salesTaxes.calculateSalesTax(receiptPosition))
+                .usingRecursiveComparison()
+                .ignoringFields("salesTax")
+                .isEqualTo(new ReceiptPosition(1, "book", BigDecimal.valueOf(12.49F), true, 5.0F, BigDecimal.valueOf(0.65F)));
+    }
+
+    @Test
+    public void testCalculationOfSalesTax_3(){
+        ReceiptPosition receiptPosition = new ReceiptPosition(1, "imported music CD", BigDecimal.valueOf(14.99F), true, 15.0F);
+
+        assertThat(salesTaxes.calculateSalesTax(receiptPosition))
+                .usingRecursiveComparison()
+                .ignoringFields("salesTax")
+                .isEqualTo(new ReceiptPosition(1, "imported music CD", BigDecimal.valueOf(14.99F), true, 15.0F, BigDecimal.valueOf(2.25F)));
+    }
 
 }

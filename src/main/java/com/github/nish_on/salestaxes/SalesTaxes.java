@@ -2,6 +2,7 @@ package com.github.nish_on.salestaxes;
 
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 
 public class SalesTaxes {
 
@@ -70,4 +71,16 @@ public class SalesTaxes {
         return receiptPosition;
     }
 
+    public ReceiptPosition calculateSalesTax(ReceiptPosition receiptPosition) {
+
+        BigDecimal salesTaxRate = BigDecimal.valueOf(receiptPosition.getSalesTaxRate());
+
+        MathContext mathContext = new MathContext(2);
+
+        BigDecimal salesTax = salesTaxRate.multiply(receiptPosition.getItemValue()).multiply(BigDecimal.valueOf(100.0F)).round(mathContext);
+
+        receiptPosition.setSalesTax(salesTax);
+        
+        return receiptPosition;
+    }
 }
