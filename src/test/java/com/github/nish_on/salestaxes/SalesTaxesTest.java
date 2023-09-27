@@ -3,6 +3,8 @@ package com.github.nish_on.salestaxes;
 import junit.framework.TestCase;
 import org.junit.Test;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.*;
 public class SalesTaxesTest {
 
@@ -28,7 +30,21 @@ public class SalesTaxesTest {
         assertThat(salesTaxes.getSplittedItemDescription("1 book at 12.49")).isEqualTo(new String[]{"1", "book", "12.49"});
     }
 
+    @Test
+    public void testSplitItemDescriptionIntoFourPartsNonImported() {
+        assertThat(salesTaxes.getSplittedItemDescriptionWithImportStatus("1 box of chocolates at 11.25"))
+                .usingRecursiveComparison()
+                .ignoringFields("salesTaxRate", "salesTax")
+                .isEqualTo(new ReceiptPosition(1, "box of chocolates", BigDecimal.valueOf(11.25F), false));
+    }
 
+    @Test
+    public void testSplitItemDescriptionIntoFourPartsImported() {
+        assertThat(salesTaxes.getSplittedItemDescriptionWithImportStatus("1 box of imported chocolates at 11.25"))
+                .usingRecursiveComparison()
+                .ignoringFields("salesTaxRate", "salesTax")
+                .isEqualTo(new ReceiptPosition(1, "box of imported chocolates", BigDecimal.valueOf(11.25F), true));
+    }
 
 
 }

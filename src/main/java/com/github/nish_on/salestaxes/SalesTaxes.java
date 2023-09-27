@@ -1,6 +1,7 @@
 package com.github.nish_on.salestaxes;
 
 
+import java.math.BigDecimal;
 
 public class SalesTaxes {
 
@@ -30,5 +31,18 @@ public class SalesTaxes {
         String[] firsSplittedArray = getAmountAndRestOfItemDescription(itemDescription);
         String[] secondSplitted = getItemDescriptionAndPrice(firsSplittedArray[1]);
         return new String[]{firsSplittedArray[0], secondSplitted[0], secondSplitted[1]};
+    }
+
+    public ReceiptPosition getSplittedItemDescriptionWithImportStatus(String itemDescription){
+        String[] splittedDescription = getSplittedItemDescription( itemDescription);
+        String[] splittedDescriptionWithImportStatus ;
+        if(splittedDescription[1].contains("imported")) {
+            splittedDescriptionWithImportStatus = new String[] {splittedDescription[0], splittedDescription[1], splittedDescription[2], "true"};
+        } else {
+            splittedDescriptionWithImportStatus = new String[] {splittedDescription[0], splittedDescription[1], splittedDescription[2], "false"};
+        }
+
+        ReceiptPosition receiptPosition = new ReceiptPosition(Integer.parseInt(splittedDescriptionWithImportStatus[0]), splittedDescriptionWithImportStatus[1], BigDecimal.valueOf(Float.parseFloat(splittedDescriptionWithImportStatus[2])), Boolean.parseBoolean(splittedDescriptionWithImportStatus[3]));
+        return receiptPosition;
     }
 }
