@@ -45,4 +45,29 @@ public class SalesTaxes {
         ReceiptPosition receiptPosition = new ReceiptPosition(Integer.parseInt(splittedDescriptionWithImportStatus[0]), splittedDescriptionWithImportStatus[1], BigDecimal.valueOf(Float.parseFloat(splittedDescriptionWithImportStatus[2])), Boolean.parseBoolean(splittedDescriptionWithImportStatus[3]));
         return receiptPosition;
     }
+
+    public ReceiptPosition getBasicSalesTaxRate(ReceiptPosition receiptPosition) {
+        String[] excemptedProductsKeywords = new String[]{"book", "bar", "pill"};
+        String[] itemWithVat = null;
+
+        receiptPosition.setSalesTaxRate(10.0F);
+
+        for(String keyword : excemptedProductsKeywords) {
+            if(receiptPosition.getItemDescription().contains(keyword)){
+                receiptPosition.setSalesTaxRate(0.0F);
+                break;
+            }
+        }
+        return receiptPosition;
+    }
+
+    public ReceiptPosition addImportTax(ReceiptPosition receiptPosition) {
+
+        if(receiptPosition.isImported()) {
+            receiptPosition.setSalesTaxRate(receiptPosition.getSalesTaxRate() + 5.0F);
+        }
+
+        return receiptPosition;
+    }
+
 }

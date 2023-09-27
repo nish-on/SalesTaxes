@@ -58,8 +58,70 @@ public class SalesTaxesTest {
     public void testSplitItemDescriptionIntoFourPartsImported_2() {
         assertThat(salesTaxes.getSplittedItemDescriptionWithImportStatus("1 imported bottle of perfume at 47.50"))
                 .usingRecursiveComparison()
-                .ignoringFields("salesTaxRate", "salesTax")
+                .ignoringFields("salesTax")
                 .isEqualTo(new ReceiptPosition(1, "imported bottle of perfume", BigDecimal.valueOf(47.50F), true));
+    }
+
+    @Test
+    public void testCalculateSalesBasicSalesTaxRateForExcemptedProduct(){
+
+        ReceiptPosition receiptPosition = new ReceiptPosition(1, "book", BigDecimal.valueOf(12.49F), false);
+
+        assertThat(salesTaxes.getBasicSalesTaxRate(receiptPosition))
+                .usingRecursiveComparison()
+                .ignoringFields("salesTax")
+                .isEqualTo(new ReceiptPosition(1, "book", BigDecimal.valueOf(12.49F), false, 0.0F));
+    }
+
+    @Test
+    public void testCalculateSalesBasicSalesTaxRateForNonExcemptedProduct(){
+
+        ReceiptPosition receiptPosition = new ReceiptPosition(1, "music CD", BigDecimal.valueOf(14.99F), false);
+
+        assertThat(salesTaxes.getBasicSalesTaxRate(receiptPosition))
+                .usingRecursiveComparison()
+                .ignoringFields("salesTax")
+                .isEqualTo(new ReceiptPosition(1, "music CD", BigDecimal.valueOf(14.99F), false, 10.0F));
+    }
+
+    @Test
+    public void testAddImportTaxForExcemptedProduct() {
+        ReceiptPosition receiptPosition = new ReceiptPosition(1, "book", BigDecimal.valueOf(12.49F), true, 0.0F);
+
+        assertThat(salesTaxes.addImportTax(receiptPosition))
+                .usingRecursiveComparison()
+                .ignoringFields("salesTax")
+                .isEqualTo(new ReceiptPosition(1, "book", BigDecimal.valueOf(12.49F), true, 5.0F));
+    }
+
+    @Test
+    public void testAddImportTaxForNotExcemptedProduct() {
+        ReceiptPosition receiptPosition = new ReceiptPosition(1, "music CD", BigDecimal.valueOf(14.99F), true, 10.0F);
+
+        assertThat(salesTaxes.addImportTax(receiptPosition))
+                .usingRecursiveComparison()
+                .ignoringFields("salesTax")
+                .isEqualTo(new ReceiptPosition(1, "music CD", BigDecimal.valueOf(14.99F), true, 15.0F));
+    }
+
+    @Test
+    public void testAddImportTaxForExcemptedProductForNonImportedProducts() {
+        ReceiptPosition receiptPosition = new ReceiptPosition(1, "book", BigDecimal.valueOf(12.49F), false, 0.0F);
+
+        assertThat(salesTaxes.addImportTax(receiptPosition))
+                .usingRecursiveComparison()
+                .ignoringFields("salesTax")
+                .isEqualTo(new ReceiptPosition(1, "book", BigDecimal.valueOf(12.49F), false, 0.0F));
+    }
+
+    @Test
+    public void testAddImportTaxForNotExcemptedProductForNonImportedProducts() {
+        ReceiptPosition receiptPosition = new ReceiptPosition(1, "music CD", BigDecimal.valueOf(14.99F), false, 10.0F);
+
+        assertThat(salesTaxes.addImportTax(receiptPosition))
+                .usingRecursiveComparison()
+                .ignoringFields("salesTax")
+                .isEqualTo(new ReceiptPosition(1, "music CD", BigDecimal.valueOf(14.99F), false, 10.0F));
     }
 
 

@@ -21,6 +21,23 @@ public class ReceiptPosition {
         this.imported = imported;
     }
 
+    public ReceiptPosition(int amount, String itemDescription, BigDecimal itemValue, boolean imported, float salesTaxRate) {
+        this.amount = amount;
+        this.itemDescription = itemDescription;
+        this.itemValue = itemValue;
+        this.imported = imported;
+        this.salesTaxRate = salesTaxRate;
+    }
+
+    public ReceiptPosition(int amount, String itemDescription, BigDecimal itemValue, boolean imported, float salesTaxRate, BigDecimal salesTax) {
+        this.amount = amount;
+        this.itemDescription = itemDescription;
+        this.itemValue = itemValue;
+        this.imported = imported;
+        this.salesTaxRate = salesTaxRate;
+        this.salesTax = salesTax;
+    }
+
     public int getAmount() {
         return amount;
     }
