@@ -10,7 +10,7 @@ public class ReceiptPosition {
 
     private boolean imported;
 
-    private float salesTaxRate;
+    private BigDecimal salesTaxRate;
 
     private BigDecimal salesTax;
 
@@ -21,7 +21,7 @@ public class ReceiptPosition {
         this.imported = imported;
     }
 
-    public ReceiptPosition(int amount, String itemDescription, BigDecimal itemValue, boolean imported, float salesTaxRate) {
+    public ReceiptPosition(int amount, String itemDescription, BigDecimal itemValue, boolean imported, BigDecimal salesTaxRate) {
         this.amount = amount;
         this.itemDescription = itemDescription;
         this.itemValue = itemValue;
@@ -29,7 +29,7 @@ public class ReceiptPosition {
         this.salesTaxRate = salesTaxRate;
     }
 
-    public ReceiptPosition(int amount, String itemDescription, BigDecimal itemValue, boolean imported, float salesTaxRate, BigDecimal salesTax) {
+    public ReceiptPosition(int amount, String itemDescription, BigDecimal itemValue, boolean imported, BigDecimal salesTaxRate, BigDecimal salesTax) {
         this.amount = amount;
         this.itemDescription = itemDescription;
         this.itemValue = itemValue;
@@ -70,11 +70,11 @@ public class ReceiptPosition {
         this.imported = imported;
     }
 
-    public float getSalesTaxRate() {
+    public BigDecimal getSalesTaxRate() {
         return salesTaxRate;
     }
 
-    public void setSalesTaxRate(float salesTaxRate) {
+    public void setSalesTaxRate(BigDecimal salesTaxRate) {
         this.salesTaxRate = salesTaxRate;
     }
 

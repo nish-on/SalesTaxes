@@ -3,6 +3,8 @@ package com.github.nish_on.salestaxes;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 public class SalesTaxes {
 
@@ -42,20 +44,20 @@ public class SalesTaxes {
         } else {
             splittedDescriptionWithImportStatus = new String[] {splittedDescription[0], splittedDescription[1], splittedDescription[2], "false"};
         }
-        MathContext mathContext = new MathContext(0);
-        ReceiptPosition receiptPosition = new ReceiptPosition(Integer.parseInt(splittedDescriptionWithImportStatus[0]), splittedDescriptionWithImportStatus[1], BigDecimal.valueOf(Float.parseFloat(splittedDescriptionWithImportStatus[2])).round(mathContext), Boolean.parseBoolean(splittedDescriptionWithImportStatus[3]));
+        MathContext mathContext = new MathContext(2);
+        ReceiptPosition receiptPosition = new ReceiptPosition(Integer.parseInt(splittedDescriptionWithImportStatus[0]), splittedDescriptionWithImportStatus[1], BigDecimal.valueOf(Double.parseDouble(splittedDescriptionWithImportStatus[2])), Boolean.parseBoolean(splittedDescriptionWithImportStatus[3]));
         return receiptPosition;
     }
 
     public ReceiptPosition getBasicSalesTaxRate(ReceiptPosition receiptPosition) {
-        String[] excemptedProductsKeywords = new String[]{"book", "bar", "pill"};
+        String[] excemptedProductsKeywords = new String[]{"book", "bar", "pill", "chocolate"};
         String[] itemWithVat = null;
 
-        receiptPosition.setSalesTaxRate(10.0F);
+        receiptPosition.setSalesTaxRate(BigDecimal.valueOf(10.0d));
 
         for(String keyword : excemptedProductsKeywords) {
             if(receiptPosition.getItemDescription().contains(keyword)){
-                receiptPosition.setSalesTaxRate(0.0F);
+                receiptPosition.setSalesTaxRate(BigDecimal.valueOf(0.0d));
                 break;
             }
         }
@@ -65,7 +67,7 @@ public class SalesTaxes {
     public ReceiptPosition addImportTax(ReceiptPosition receiptPosition) {
 
         if(receiptPosition.isImported()) {
-            receiptPosition.setSalesTaxRate(receiptPosition.getSalesTaxRate() + 5.0F);
+            receiptPosition.setSalesTaxRate(receiptPosition.getSalesTaxRate().add(BigDecimal.valueOf(5.0d)));
         }
 
         return receiptPosition;
@@ -73,11 +75,11 @@ public class SalesTaxes {
 
     public ReceiptPosition calculateSalesTax(ReceiptPosition receiptPosition) {
 
-        BigDecimal salesTaxRate = BigDecimal.valueOf(receiptPosition.getSalesTaxRate());
+        BigDecimal salesTaxRate = receiptPosition.getSalesTaxRate();
 
-        MathContext mathContext = new MathContext(0);
+        MathContext mathContext = new MathContext(2);
 
-        BigDecimal salesTax = salesTaxRate.multiply(receiptPosition.getItemValue()).multiply(BigDecimal.valueOf(100.0F)).round(mathContext);
+        BigDecimal salesTax = salesTaxRate.multiply(receiptPosition.getItemValue()).divide(BigDecimal.valueOf(100.0F)).round(mathContext);
 
         receiptPosition.setSalesTax(salesTax);
 
@@ -89,6 +91,14 @@ public class SalesTaxes {
         BigDecimal salesTaxes = BigDecimal.valueOf(0.0F);
         BigDecimal total = BigDecimal.valueOf(0.0F);
         String[] cartArray = cart.split("\\n");
+        MathContext mathContext = new MathContext(4);
+        DecimalFormatSymbols dfs
+                = new DecimalFormatSymbols();
+        dfs.setDecimalSeparator('.');
+
+        DecimalFormat df = new DecimalFormat("#0.00", dfs);
+        //System.out.println(df.format(50)); // 050.0
+
 
         for(String itemDescription : cartArray) {
             ReceiptPosition receiptPosition = getSplittedItemDescriptionWithImportStatus(itemDescription);
@@ -97,14 +107,14 @@ public class SalesTaxes {
                     .append(" ")
                     .append(receiptPosition.getItemDescription())
                     .append(": ")
-                    .append(receiptPosition.getItemValue().add(receiptPosition.getSalesTax()))
+                    .append(df.format(receiptPosition.getItemValue().add(receiptPosition.getSalesTax()).round(mathContext).doubleValue()))
                     .append("\n");
             salesTaxes = salesTaxes.add(receiptPosition.getSalesTax());
             total = total.add(receiptPosition.getItemValue().add(receiptPosition.getSalesTax()));
         }
 
-        sb.append("Sales Taxes: ").append(salesTaxes).append("\n")
-                .append("Total: ").append(total);
+        sb.append("Sales Taxes: ").append(df.format(salesTaxes)).append("\n")
+                .append("Total: ").append(df.format(total));
 
         return sb.toString();
     }
