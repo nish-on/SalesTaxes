@@ -44,7 +44,7 @@ public class SalesTaxesTest {
         assertThat(salesTaxes.getSplittedItemDescriptionWithImportStatus("1 box of imported chocolates at 11.25"))
                 .usingRecursiveComparison()
                 .ignoringFields("salesTaxRate", "salesTax")
-                .isEqualTo(new ReceiptPosition(1, "box of imported chocolates", BigDecimal.valueOf(11.25F), true));
+                .isEqualTo(new ReceiptPosition(1, "box of chocolates", BigDecimal.valueOf(11.25F), true));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class SalesTaxesTest {
         assertThat(salesTaxes.getSplittedItemDescriptionWithImportStatus("1 imported bottle of perfume at 47.50"))
                 .usingRecursiveComparison()
                 .ignoringFields("salesTax")
-                .isEqualTo(new ReceiptPosition(1, "imported bottle of perfume", BigDecimal.valueOf(47.50F), true));
+                .isEqualTo(new ReceiptPosition(1, "bottle of perfume", BigDecimal.valueOf(47.50F), true));
     }
 
     @Test
@@ -186,7 +186,7 @@ public class SalesTaxesTest {
     }
 
     @Test
-    public void testOutput(){
+    public void testOutput1(){
         String input = "1 book at 12.49\n1 music CD at 14.99\n1 chocolate bar at 0.85";
         String expectedOutput = "1 book: 12.49\n1 music CD: 16.49\n1 chocolate bar: 0.85\nSales Taxes: 1.50\nTotal: 29.83";
         assertThat(salesTaxes.getReceiptContent(input))

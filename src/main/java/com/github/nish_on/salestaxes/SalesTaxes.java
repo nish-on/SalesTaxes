@@ -41,7 +41,9 @@ public class SalesTaxes {
         String[] splittedDescription = getSplittedItemDescription( itemDescription);
         String[] splittedDescriptionWithImportStatus ;
         if(splittedDescription[1].contains("imported")) {
-            splittedDescriptionWithImportStatus = new String[] {splittedDescription[0], splittedDescription[1], splittedDescription[2], "true"};
+
+            splittedDescriptionWithImportStatus = new String[] {splittedDescription[0], splittedDescription[1].replace("imported ", ""), splittedDescription[2], "true"};
+
         } else {
             splittedDescriptionWithImportStatus = new String[] {splittedDescription[0], splittedDescription[1], splittedDescription[2], "false"};
         }
@@ -110,7 +112,7 @@ public class SalesTaxes {
             receiptPosition = calculateSalesTax(addImportTax(getBasicSalesTaxRate( receiptPosition)));
             sb.append(receiptPosition.getAmount())
                     .append(" ")
-                    .append(receiptPosition.getItemDescription())
+                    .append( receiptPosition.isImported() ? "imported " + receiptPosition.getItemDescription() : receiptPosition.getItemDescription())
                     .append(": ")
                     .append(df.format(receiptPosition.getItemValue().add(receiptPosition.getSalesTax()).doubleValue()))
                     .append("\n");
