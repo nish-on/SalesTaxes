@@ -19,33 +19,33 @@ public class SalesTaxes {
 
     public String[] getItemDescriptionAndPrice(String itemDescription) {
         String[] splittedItemDescription = itemDescription.split(" at ");
-        if(splittedItemDescription.length == 2) {
+        if (splittedItemDescription.length == 2) {
             return splittedItemDescription;
         } else {
 
             String description = "";
-            for (int i = 0; i < splittedItemDescription.length -2 ;i++) {
+            for (int i = 0; i < splittedItemDescription.length - 2; i++) {
                 description += splittedItemDescription[i] + " at ";
             }
             return new String[]{description, splittedItemDescription[splittedItemDescription.length - 1]};
         }
     }
 
-    public String[] getSplittedItemDescription(String itemDescription){
+    public String[] getSplittedItemDescription(String itemDescription) {
         String[] firsSplittedArray = getAmountAndRestOfItemDescription(itemDescription);
         String[] secondSplitted = getItemDescriptionAndPrice(firsSplittedArray[1]);
         return new String[]{firsSplittedArray[0], secondSplitted[0], secondSplitted[1]};
     }
 
-    public ReceiptPosition getSplittedItemDescriptionWithImportStatus(String itemDescription){
-        String[] splittedDescription = getSplittedItemDescription( itemDescription);
-        String[] splittedDescriptionWithImportStatus ;
-        if(splittedDescription[1].contains("imported")) {
+    public ReceiptPosition getSplittedItemDescriptionWithImportStatus(String itemDescription) {
+        String[] splittedDescription = getSplittedItemDescription(itemDescription);
+        String[] splittedDescriptionWithImportStatus;
+        if (splittedDescription[1].contains("imported")) {
 
-            splittedDescriptionWithImportStatus = new String[] {splittedDescription[0], splittedDescription[1].replace("imported ", ""), splittedDescription[2], "true"};
+            splittedDescriptionWithImportStatus = new String[]{splittedDescription[0], splittedDescription[1].replace("imported ", ""), splittedDescription[2], "true"};
 
         } else {
-            splittedDescriptionWithImportStatus = new String[] {splittedDescription[0], splittedDescription[1], splittedDescription[2], "false"};
+            splittedDescriptionWithImportStatus = new String[]{splittedDescription[0], splittedDescription[1], splittedDescription[2], "false"};
         }
         MathContext mathContext = new MathContext(2);
         ReceiptPosition receiptPosition = new ReceiptPosition(Integer.parseInt(splittedDescriptionWithImportStatus[0]), splittedDescriptionWithImportStatus[1], BigDecimal.valueOf(Double.parseDouble(splittedDescriptionWithImportStatus[2])), Boolean.parseBoolean(splittedDescriptionWithImportStatus[3]));
@@ -58,8 +58,8 @@ public class SalesTaxes {
 
         receiptPosition.setSalesTaxRate(BigDecimal.valueOf(10.0d));
 
-        for(String keyword : excemptedProductsKeywords) {
-            if(receiptPosition.getItemDescription().contains(keyword)){
+        for (String keyword : excemptedProductsKeywords) {
+            if (receiptPosition.getItemDescription().contains(keyword)) {
                 receiptPosition.setSalesTaxRate(BigDecimal.valueOf(0.0d));
                 break;
             }
@@ -69,7 +69,7 @@ public class SalesTaxes {
 
     public ReceiptPosition addImportTax(ReceiptPosition receiptPosition) {
 
-        if(receiptPosition.isImported()) {
+        if (receiptPosition.isImported()) {
             receiptPosition.setSalesTaxRate(receiptPosition.getSalesTaxRate().add(BigDecimal.valueOf(5.0d)));
         }
 
@@ -81,12 +81,9 @@ public class SalesTaxes {
         BigDecimal salesTaxRate = receiptPosition.getSalesTaxRate();
 
         MathContext mathContext = new MathContext(2, RoundingMode.HALF_UP);
-       //  MathContext mathContext2 = new MathContext(10, RoundingMode.UP);
 
-        BigDecimal salesTax = BigDecimal.valueOf((double)(Math.round (Math.ceil(receiptPosition.getItemValue().doubleValue() * receiptPosition.getSalesTaxRate().doubleValue() * 20.0d  / 100.0d) ) ) / 20.0d) ;
+        BigDecimal salesTax = BigDecimal.valueOf((double) (Math.round(Math.ceil(receiptPosition.getItemValue().doubleValue() * receiptPosition.getSalesTaxRate().doubleValue() * 20.0d / 100.0d))) / 20.0d);
         salesTax = salesTax.setScale(2, RoundingMode.UP);
-
-       //  BigDecimal salesTax = salesTaxRate.multiply(receiptPosition.getItemValue()).divide(BigDecimal.valueOf(100.0F), mathContext2).multiply(BigDecimal.valueOf(20.0d)).round(mathContext).divide(BigDecimal.valueOf(20.0d), mathContext);
 
         receiptPosition.setSalesTax(salesTax);
 
@@ -107,12 +104,12 @@ public class SalesTaxes {
         //System.out.println(df.format(50)); // 050.0
 
 
-        for(String itemDescription : cartArray) {
+        for (String itemDescription : cartArray) {
             ReceiptPosition receiptPosition = getSplittedItemDescriptionWithImportStatus(itemDescription);
-            receiptPosition = calculateSalesTax(addImportTax(getBasicSalesTaxRate( receiptPosition)));
+            receiptPosition = calculateSalesTax(addImportTax(getBasicSalesTaxRate(receiptPosition)));
             sb.append(receiptPosition.getAmount())
                     .append(" ")
-                    .append( receiptPosition.isImported() ? "imported " + receiptPosition.getItemDescription() : receiptPosition.getItemDescription())
+                    .append(receiptPosition.isImported() ? "imported " + receiptPosition.getItemDescription() : receiptPosition.getItemDescription())
                     .append(": ")
                     .append(df.format(receiptPosition.getItemValue().add(receiptPosition.getSalesTax()).doubleValue()))
                     .append("\n");
