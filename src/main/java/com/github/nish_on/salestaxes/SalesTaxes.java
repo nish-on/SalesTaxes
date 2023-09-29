@@ -78,10 +78,11 @@ public class SalesTaxes {
 
         BigDecimal salesTaxRate = receiptPosition.getSalesTaxRate();
 
-        MathContext mathContext = new MathContext(0, RoundingMode.UP);
-        MathContext mathContext2 = new MathContext(10, RoundingMode.UP);
+        MathContext mathContext = new MathContext(2, RoundingMode.HALF_UP);
+       //  MathContext mathContext2 = new MathContext(10, RoundingMode.UP);
 
-        BigDecimal salesTax = BigDecimal.valueOf((double)((int) (Math.round(receiptPosition.getItemValue().doubleValue() * receiptPosition.getSalesTaxRate().doubleValue() * 20.0d  / 100.0d) ) ) / 20.0d) ;
+        BigDecimal salesTax = BigDecimal.valueOf((double)(Math.round (Math.ceil(receiptPosition.getItemValue().doubleValue() * receiptPosition.getSalesTaxRate().doubleValue() * 20.0d  / 100.0d) ) ) / 20.0d) ;
+        salesTax = salesTax.setScale(2, RoundingMode.UP);
 
        //  BigDecimal salesTax = salesTaxRate.multiply(receiptPosition.getItemValue()).divide(BigDecimal.valueOf(100.0F), mathContext2).multiply(BigDecimal.valueOf(20.0d)).round(mathContext).divide(BigDecimal.valueOf(20.0d), mathContext);
 
