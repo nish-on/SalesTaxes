@@ -157,12 +157,12 @@ public class SalesTaxesTest {
 
     @Test
     public void testCalculationOfSalesTax_4(){
-        ReceiptPosition receiptPosition = new ReceiptPosition(1, "imported box of chocolates", BigDecimal.valueOf(10.0F), true, BigDecimal.valueOf(15.0d));
+        ReceiptPosition receiptPosition = new ReceiptPosition(1, "imported box of chocolates", BigDecimal.valueOf(10.0F), true, BigDecimal.valueOf(5.0d));
 
         assertThat(salesTaxes.calculateSalesTax(receiptPosition))
                 .usingRecursiveComparison()
                 .ignoringFields("salesTax")
-                .isEqualTo(new ReceiptPosition(1, "imported box of chocolates", BigDecimal.valueOf(11.25F), true, BigDecimal.valueOf(05.0d), BigDecimal.valueOf(1.7F)));
+                .isEqualTo(new ReceiptPosition(1, "imported box of chocolates", BigDecimal.valueOf(10.0F), true, BigDecimal.valueOf(5.0d), BigDecimal.valueOf(0.5F)));
     }
 
     @Test
@@ -186,7 +186,7 @@ public class SalesTaxesTest {
     @Test
     public void testOutput2(){
         String input = "1 imported box of chocolates at 10.00\n1 imported bottle of perfume at 47.50";
-        String expectedOutput = "1 imported box of chocolates: 10.50\n1 imported bottle of perfume: 54.65\nSales Taxes: 7.65\n> Total: 65.15";
+        String expectedOutput = "1 imported box of chocolates: 10.50\n1 imported bottle of perfume: 54.65\nSales Taxes: 7.65\nTotal: 65.15";
         assertThat(salesTaxes.getReceiptContent(input))
                 .isEqualTo(expectedOutput);
     }

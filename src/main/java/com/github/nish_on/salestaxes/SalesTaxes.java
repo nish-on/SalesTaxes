@@ -3,6 +3,7 @@ package com.github.nish_on.salestaxes;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
@@ -77,9 +78,12 @@ public class SalesTaxes {
 
         BigDecimal salesTaxRate = receiptPosition.getSalesTaxRate();
 
-        MathContext mathContext = new MathContext(2);
+        MathContext mathContext = new MathContext(0, RoundingMode.UP);
+        MathContext mathContext2 = new MathContext(10, RoundingMode.UP);
 
-        BigDecimal salesTax = salesTaxRate.multiply(receiptPosition.getItemValue()).divide(BigDecimal.valueOf(100.0F)).round(mathContext);
+        BigDecimal salesTax = BigDecimal.valueOf((double)((int) (Math.round(receiptPosition.getItemValue().doubleValue() * receiptPosition.getSalesTaxRate().doubleValue() * 20.0d  / 100.0d) ) ) / 20.0d) ;
+
+       //  BigDecimal salesTax = salesTaxRate.multiply(receiptPosition.getItemValue()).divide(BigDecimal.valueOf(100.0F), mathContext2).multiply(BigDecimal.valueOf(20.0d)).round(mathContext).divide(BigDecimal.valueOf(20.0d), mathContext);
 
         receiptPosition.setSalesTax(salesTax);
 
@@ -91,7 +95,7 @@ public class SalesTaxes {
         BigDecimal salesTaxes = BigDecimal.valueOf(0.0F);
         BigDecimal total = BigDecimal.valueOf(0.0F);
         String[] cartArray = cart.split("\\n");
-        MathContext mathContext = new MathContext(4);
+        MathContext mathContext = new MathContext(2);
         DecimalFormatSymbols dfs
                 = new DecimalFormatSymbols();
         dfs.setDecimalSeparator('.');
@@ -107,7 +111,7 @@ public class SalesTaxes {
                     .append(" ")
                     .append(receiptPosition.getItemDescription())
                     .append(": ")
-                    .append(df.format(receiptPosition.getItemValue().add(receiptPosition.getSalesTax()).round(mathContext).doubleValue()))
+                    .append(df.format(receiptPosition.getItemValue().add(receiptPosition.getSalesTax()).doubleValue()))
                     .append("\n");
             salesTaxes = salesTaxes.add(receiptPosition.getSalesTax());
             total = total.add(receiptPosition.getItemValue().add(receiptPosition.getSalesTax()));
