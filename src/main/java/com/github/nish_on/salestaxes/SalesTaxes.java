@@ -7,8 +7,23 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
+import java.util.Scanner;
+
 public class SalesTaxes {
 
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Copy and paste the multiline Cart content.\nDon't forget to prepend the number of following lines.: \n");
+        String cartContent = "";
+        int n=scanner.nextInt();
+        scanner.nextLine();
+        for(int i=0;i<n;i++) {
+            cartContent = cartContent + scanner.nextLine() + "\n";
+        }
+        SalesTaxes salesTaxes = new SalesTaxes();
+        salesTaxes.getReceiptContent(cartContent);
+        scanner.close();
+    }
 
     public String[] getAmountAndRestOfItemDescription(String itemDescription) {
 
@@ -119,7 +134,10 @@ public class SalesTaxes {
 
         sb.append("Sales Taxes: ").append(df.format(salesTaxes)).append("\n")
                 .append("Total: ").append(df.format(total));
-
-        return sb.toString();
+        
+        String receipt = sb.toString();
+        System.out.println("\n Your Receipt:\n");
+        System.out.println(receipt);
+        return receipt;
     }
 }
